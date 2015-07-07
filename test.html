@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>jQuery Knob demo</title>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+        <!--[if IE]><script type="text/javascript" src="excanvas.js"></script><![endif]-->
+        <script src="js/jquery.knob.js"></script>
+        <script>
+            $(function($) {
+
+                $(".knob").knob({
+                    change : function (value) {
+                    //    console.log("change : " + value);
+                    //    $(this).val(value + " - " + (value + 10));
+                    if((this.o.onHandle)) {
+                        console.log(this.cv)
+                        $(".knob1val").text(this.cv)
+                    }
+                    else {
+                        console.log(this.cv)
+                        $(".knob1val").text(this.cv)
+                    }
+
+                    },
+                    release : function (value) {
+                        //console.log(this.$.attr('value'));
+                    //    console.log("release : " + value);
+                //    $(this).val(value + " - " + (value + 10));
+
+            //        console.log(this.o.cursorExt)
+                    if(!(this.o.onHandle)) {
+                        this.cursorExt = Math.PI * value / this.o.max ;
+            //            console.log(value);
+
+                    }
+
+                    },
+                    cancel : function () {
+                    //    console.log("cancel : ", this);
+                    },
+                    format : function (value) {
+                    //    console.log(this)
+                        return value + '-' + value;
+                    },
+                    draw : function () {
+
+                        // "tron" case
+                    }
+                });
+
+                $(".knob2").knob({
+                    change : function (value) {
+                //        console.log("change : " + value);
+                        $(this).val(value + " - " + (value + 10));
+                        if(!(this.o.onHandle)) {
+                        }
+                    },
+                    release : function (value) {
+                        //console.log(this.$.attr('value'));
+                    //    console.log("release : " + value);
+                //    $(this).val(value + " - " + (value + 10));
+
+                    console.log(this.o.cursorExt)
+                    if(!(this.o.onHandle)) {
+                        this.cursorExt = Math.PI * value / this.o.max ;
+                     console.log(value);
+
+                    }
+
+                    },
+                    cancel : function () {
+                    //    console.log("cancel : ", this);
+                    },
+                    format : function (value) {
+                    //    console.log(this)
+                        return value + '-' + value;
+                    },
+                    draw : function () {
+
+                    }
+                });
+
+            });
+        </script>
+        <style>
+            body{
+              padding: 0;
+              margin: 0px 50px;
+              font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+              font-weight: 300;
+              text-rendering: optimizelegibility;
+            }
+            p{font-size: 30px; line-height: 30px}
+            div.demo{text-align: center; width: 280px; float: left}
+            div.demo > p{font-size: 20px}
+        </style>
+    </head>
+    <body>
+
+        <div class="demo">
+            <p>&#215; 'cursor' mode</p>
+            <pre>
+data-width="150"
+data-cursor=true
+data-thickness=.3
+data-fgColor="#222222"
+            </pre>
+            <input style="display: none;" class="knob"  data-min="1" data-max="24" data-step="0.5" data-thickness="0.2" data-width="150" data-cursor="30" data-hybrid="true" data-fgColor="#222222" data-thickness=".3" value="0">
+            <div>
+                <span class="knob1val"></span>
+            </div>
+        </div>
+
+
+        <div class="demo">
+            <p>&#215; 'cursor' mode</p>
+            <pre>
+data-width="150"
+data-cursor=true
+data-thickness=.3
+data-fgColor="#222222"
+            </pre>
+            <input class="knob2"   data-thickness="0.2" data-width="150" data-cursor="30" data-hybrid="true" data-fgColor="#222222" data-thickness=".3" value="0">
+        </div>
+
+    </body>
+</html>

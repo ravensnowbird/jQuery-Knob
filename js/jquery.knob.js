@@ -75,6 +75,7 @@
         this.eH = null; // cancel hook
         this.rH = null; // release hook
         this.scale = 1; // scale factor
+        this.onHandle = false;
         this.relative = false;
         this.relativeWidth = false;
         this.relativeHeight = false;
@@ -105,6 +106,7 @@
                     // UI
                     cursor: this.$.data('cursor') === true && 30
                             || this.$.data('cursor') || 0,
+                    hybrid: this.$.data('hybrid') === true || false,
                     thickness: this.$.data('thickness')
                                && Math.max(Math.min(this.$.data('thickness'), 1), 0.01)
                                || 0.35,
@@ -118,6 +120,7 @@
                     font: this.$.data('font') || 'Arial',
                     fontWeight: this.$.data('font-weight') || 'bold',
                     inline: false,
+                    onHandle: true,
                     step: this.$.data('step') || 1,
                     rotation: this.$.data('rotation'),
 
@@ -332,6 +335,7 @@
             this.t = k.c.t(e);
 
             // First touch
+            console.log("touch")
             touchMove(e);
 
             // Touch events listeners
@@ -350,7 +354,11 @@
 
         this._mouse = function (e) {
             var mouseMove = function (e) {
+            //    console.log(e)
+
+
                 var v = s.xy2val(e.pageX, e.pageY);
+
 
                 if (v == s.cv) return;
 
@@ -361,6 +369,7 @@
             };
 
             // First click
+            console.log("mouse")
             mouseMove(e);
 
             // Mouse events listeners
@@ -405,6 +414,23 @@
                     .bind(
                         "mousedown",
                         function (e) {
+
+                            //    console.log(s);
+                            //    var pos = findPos($(this));
+                                var x = e.pageX - s.x;
+                                var y = e.pageY - s.y;
+                                var p = s.c.getImageData(x, y, 1, 1).data;
+                                var hex = "#" + ("000000" + rgbToHex(p[0], p[1], p[2])).slice(-6);
+                            //    console.log(hex);
+                            //    console.log(s.fgColor);
+
+                                if(s.fgColor == hex)
+                                  s.o.onHandle = true;
+                                else
+                                  s.o.onHandle = false;
+
+                            //    console.log(s.o.onHandle);
+
                             e.preventDefault();
                             s._xy()._mouse(e);
                         }
@@ -534,6 +560,7 @@
         };
 
         this.xy2val = function (x, y) {
+        //    console.log(this.angleOffset)
             var a, ret;
 
             a = Math.atan2(
@@ -678,6 +705,7 @@
 
             this.$.val(this.v);
             this.w2 = this.w / 2;
+            //console.log(this.o.cursor)
             this.cursorExt = this.o.cursor / 100;
             this.xy = this.w2 * this.scale;
             this.lineWidth = this.xy * this.o.thickness;
@@ -736,6 +764,7 @@
 
         this.arc = function (v) {
           var sa, ea;
+          //console.log(v);
           v = this.angle(v);
           if (this.o.flip) {
               sa = this.endAngle + 0.00001;
@@ -744,10 +773,30 @@
               sa = this.startAngle - 0.00001;
               ea = sa + v + 0.00001;
           }
-          this.o.cursor
-              && (sa = ea - this.cursorExt)
-              && (ea = ea + this.cursorExt);
+        //  this.cursorExt = 3.14159;
+    //      console.log(this.cursorExt);
+        //  console.log(sa);
+    //      console.log(this.angleOffset);
+    //      console.log(this.o.angleOffset);
 
+          if (this.o.hybrid) {
+             if(this.o.onHandle) {
+                 this.o.cursor
+                      && (sa = ea - this.cursorExt)
+                      && (ea = ea + this.cursorExt);
+             }
+
+          }
+          else {
+              this.o.cursor
+                  && (sa = ea - this.cursorExt)
+                  && (ea = ea + this.cursorExt);
+          }
+
+    //      console.log(v);
+    //      console.log(sa);
+    //      console.log(ea);
+    //      console.log(this.cursorExt);
           return {
               s: sa,
               e: ea,
@@ -803,3 +852,20 @@
     };
 
 }));
+function findPos(obj) {
+    var curleft = 0, curtop = 0;
+    if (obj.offsetParent) {
+        do {
+            curleft += obj.offsetLeft;
+            curtop += obj.offsetTop;
+        } while (obj = obj.offsetParent);
+        return { x: curleft, y: curtop };
+    }
+    return undefined;
+}
+
+function rgbToHex(r, g, b) {
+    if (r > 255 || g > 255 || b > 255)
+        throw "Invalid color component";
+    return ((r << 16) | (g << 8) | b).toString(16);
+}

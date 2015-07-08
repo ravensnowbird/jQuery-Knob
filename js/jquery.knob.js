@@ -438,6 +438,23 @@
                     .bind(
                         "touchstart",
                         function (e) {
+
+                            //    console.log(s);
+                            //    var pos = findPos($(this));
+                                var x = e.pageX - s.x;
+                                var y = e.pageY - s.y;
+                                var p = s.c.getImageData(x, y, 1, 1).data;
+                                var hex = "#" + ("000000" + rgbToHex(p[0], p[1], p[2])).slice(-6);
+                            //    console.log(hex);
+                            //    console.log(s.fgColor);
+
+                                if(s.fgColor == hex)
+                                  s.o.onHandle = true;
+                                else
+                                  s.o.onHandle = false;
+
+                            //    console.log(s.o.onHandle);
+
                             e.preventDefault();
                             s._xy()._touch(e);
                         }
